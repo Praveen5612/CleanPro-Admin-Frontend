@@ -1,0 +1,78 @@
+/* MAIN CONTAINER */
+.dashboard-container {
+  padding: 20px;
+}
+
+/* PAGE TITLE */
+.dashboard-title {
+  font-size: 22px;
+  font-weight: 600;
+  background: #ffffff;
+  padding: 14px 20px;
+  border-radius: 10px;
+  border: 1px solid #eee;
+  margin-bottom: 20px;
+}
+
+/* GRID LAYOUT - 2x2 */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px;
+}
+
+/* CARD STYLE */
+.dashboard-card {
+  background: #829b79;
+  padding: 22px;
+  height: 170px;
+  border-radius: 12px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  position: relative;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+  transition: all 0.2s ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+}
+
+/* ICON HOLDER */
+.card-icon-holder {
+  background: black;
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-icon {
+  font-size: 20px;
+  color: white;
+}
+
+/* COUNT NUMBER */
+.count {
+  font-size: 34px;
+  font-weight: 700;
+  margin-top: 12px;
+}
+
+/* LABEL TEXT */
+.label {
+  font-size: 15px;
+  margin-top: 4px;
+}
+
+/* RESPONSIVE - Mobile */
+@media (max-width: 600px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
