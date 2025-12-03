@@ -1,21 +1,26 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute = ({ children, role }) => {
   const token = localStorage.getItem("token");
-  const user = JSON.parse(localStorage.getItem("user") || "null");
+  const user = JSON.parse(localStorage.getItem("user"));
 
-  // If no token → not logged in
-  if (!token || !user) {
-    return <Navigate to="/" replace />;
-  }
+  // Not logged in
+  if (!token || !user) return <Navigate to="/login" />;
 
-  // Normalize role (avoid Admin / ADMIN mismatch)
-  const role = user.role?.toLowerCase();
-
-  // Only admin allowed
-  if (role !== "admin") {
-    return <Navigate to="/" replace />;
+  // Role mismatch
+  if (role && user.role !== role) {
+    // Redirect to their correct home page
+    switch (user.role) {
+      case "admin":
+        return <Navigate to="/admin/dashboard" />;
+      case "cleaner":
+        return <Navigate to="/cleaner-home" />;
+      case "partner":
+        return <Navigate to="/partner-home" />;
+      default:
+        return <Navigate to="/user-home" />;
+    }
   }
 
   return children;

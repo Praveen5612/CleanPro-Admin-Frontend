@@ -1,9 +1,9 @@
 // src/pages/ManageUser.jsx
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../styles/ManageUser.css";
 import api from "../api/Axios.js";
 
-const API = "/api/users"; // axios instance supplies baseURL
+const API = "/api/users";
 
 const ManageUser = () => {
   const [users, setUsers] = useState([]);
@@ -11,263 +11,185 @@ const ManageUser = () => {
   const [editOpen, setEditOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
-  const isMounted = useRef(true);
 
-  const roles = ["admin", "user", "partner", "cleaner"];
-  const placeholderImage = "https://placehold.co/50x50";
+  const placeholderImage = "https://placehold.co/60x60";
+  const BASE_URL = "http://localhost:5000"; // Base backend URL
+  const roles = ["admin", "partner", "cleaner", "user"];
 
-
- 
-
-  useEffect(() => {
-    // track mounted state to avoid state updates after unmount
-    isMounted.current = true;
-    return () => {
-      isMounted.current = false;
-    };
-  }, []);
-
-
-
-   if (!localStorage.getItem("token")) {
-  window.location.href = "/";
-  return null;
+  // AUTH CHECK
+  if (!localStorage.getItem("token")) {
+    window.location.href = "/";
+    return null;
   }
 
-  // ============================================================
-  // LOAD USERS — fetch inside effect or called when needed
-  // ============================================================
+  // LOAD USERS
   const loadUsers = async () => {
     try {
       const res = await api.get(API);
-      if (!isMounted.current) return;
       setUsers(res.data || []);
-      setErrorMsg("");
     } catch (err) {
-      console.error("Load error:", err);
-      if (err?.response) console.error("server:", err.response.data);
-      if (!isMounted.current) return;
+      console.error(err);
       setErrorMsg("Failed to load users.");
     }
   };
 
-  // initial load (async inside effect to avoid "sync setState in effect" warnings)
   useEffect(() => {
-    let cancelled = false;
-
-    (async () => {
-      try {
-        const res = await api.get(API);
-        if (cancelled) return;
-        setUsers(res.data || []);
-        setErrorMsg("");
-      } catch (err) {
-        console.error("Initial load error:", err);
-        if (err?.response) console.error("server:", err.response.data);
-        if (cancelled) return;
-        setErrorMsg("Failed to load users.");
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    loadUsers();
   }, []);
 
-  // ============================================================
-  // HELPERS
-  // ============================================================
-  const validateEmail = (email) => /^\S+@\S+\.\S+$/.test(email);
-
-  // ============================================================
+  // -----------------------------------
   // CREATE USER
-  // ============================================================
+  // -----------------------------------
   const [newUser, setNewUser] = useState({
-    first_name: "",
-    last_name: "",
+    full_name: "",
     email: "",
+    phone: "",
     role: "",
-    profile: "",
+    profile_image: "",
   });
 
   const handleCreateChange = (key, value) =>
-    setNewUser((p) => ({ ...p, [key]: value }));
+    setNewUser((prev) => ({ ...prev, [key]: value }));
 
   const handleCreateSave = async () => {
     setErrorMsg("");
-    if (!newUser.first_name || !newUser.last_name || !newUser.role) {
-      setErrorMsg("All fields are required.");
-      return;
-    }
-    if (!validateEmail(newUser.email)) {
-      setErrorMsg("Invalid email address.");
-      return;
-    }
 
-    const payload = {
-      first_name: newUser.first_name,
-      last_name: newUser.last_name,
-      email: newUser.email,
-      role: newUser.role,
-      profile: newUser.profile ? newUser.profile : null,
-    };
+    if (!newUser.full_name || !newUser.email || !newUser.role) {
+      setErrorMsg("Full name, email, and role are required.");
+      return;
+    }
 
     try {
-      const res = await api.post(API, payload);
+      await api.post(API, {
+        full_name: newUser.full_name,
+        email: newUser.email,
+        phone: newUser.phone,
+        role: newUser.role,
+        password: "User@123",
+        profile_image: newUser.profile_image || null,
+      });
 
-      // prefer server-returned user; fallback to payload
-      const created = res.data?.user ?? res.data ?? payload;
-
-      // if server gave an id, push it; otherwise reload safely
-      if (created && created.user_id) {
-        setUsers((prev) => [...prev, created]);
-      } else {
-        // fallback: re-fetch once (rare)
-        await loadUsers();
-      }
-
-      setNewUser({ first_name: "", last_name: "", email: "", role: "", profile: "" });
+      loadUsers();
       setCreateOpen(false);
-      setErrorMsg("");
+
+      setNewUser({
+        full_name: "",
+        email: "",
+        phone: "",
+        role: "",
+        profile_image: "",
+      });
     } catch (err) {
-      console.error("Create error:", err);
-      if (err?.response) console.error("server:", err.response.data);
+      console.error(err);
       setErrorMsg("Failed to create user.");
     }
   };
 
-  // ============================================================
-  // OPEN EDIT FORM
-  // ============================================================
+  // -----------------------------------
+  // EDIT
+  // -----------------------------------
   const openEditForm = (user) => {
     setSelectedUser({ ...user });
     setEditOpen(true);
-    setErrorMsg("");
   };
 
   const handleEditChange = (key, value) =>
-    setSelectedUser((p) => ({ ...p, [key]: value }));
+    setSelectedUser((prev) => ({ ...prev, [key]: value }));
 
-  // ============================================================
-  // UPDATE USER
-  // ============================================================
   const handleEditSave = async () => {
-  setErrorMsg("");
+    if (!selectedUser) return;
 
-  if (!selectedUser) {
-    setErrorMsg("No user selected.");
-    return;
-  }
+    try {
+      await api.put(API, {
+        email: selectedUser.email,
+        full_name: selectedUser.full_name,
+        phone: selectedUser.phone,
+        role: selectedUser.role,
+        profile_image: selectedUser.profile_image || null,
+      });
 
-  if (!validateEmail(selectedUser.email)) {
-    setErrorMsg("Invalid email address.");
-    return;
-  }
-
-  // Payload MUST match backend exactly
-  const payload = {
-    user_id: selectedUser.user_id,
-    first_name: selectedUser.first_name,
-    last_name: selectedUser.last_name,
-    email: selectedUser.email,
-    role: selectedUser.role,
-    profile: selectedUser.profile || null, // avoid empty string issue
+      loadUsers();
+      setEditOpen(false);
+    } catch (err) {
+      console.error(err);
+      setErrorMsg("Failed to update user.");
+    }
   };
 
-  try {
-    await api.put(API, payload);
-
-    // Backend does NOT return updated user → reload full list
-    await loadUsers();
-
-    setEditOpen(false);
-    setSelectedUser(null);
-  } catch (err) {
-    console.error("Update error:", err);
-    if (err.response) console.error("server:", err.response.data);
-    setErrorMsg("Failed to update user.");
-  }
-};
-
-
-  // ============================================================
-  // DELETE USER
-  // Backend expects: DELETE /api/users  with body { user_id }
-  // ============================================================
-  const handleDelete = async (user_id) => {
+  // -----------------------------------
+  // DELETE
+  // -----------------------------------
+  const handleDelete = async (email) => {
     if (!window.confirm("Delete this user?")) return;
 
     try {
-      await api.delete(API, { data: { user_id } });
-
-      // Update UI instantly after success
-      setUsers((prev) => prev.filter((u) => u.user_id !== user_id));
-      setErrorMsg("");
+      await api.delete(API, { data: { email } });
+      loadUsers();
     } catch (err) {
-      console.error("Delete error:", err);
-      if (err?.response) console.error("server:", err.response.data);
+      console.error(err);
       setErrorMsg("Failed to delete user.");
     }
   };
 
-  // ============================================================
-  // RENDER
-  // ============================================================
   return (
     <div className="user-container">
       <h1 className="title">Manage Users</h1>
-      <p className="subtitle">Users</p>
 
       <button className="create-btn" onClick={() => setCreateOpen(true)}>
         CREATE USER
       </button>
 
-      {errorMsg && (
-        <p style={{ color: "red", marginBottom: 10 }}>{errorMsg}</p>
-      )}
-
-      {/* USERS TABLE */}
       <div className="table-wrapper">
         <table className="user-table">
           <thead>
             <tr>
               <th>ID</th>
               <th>Profile</th>
-              <th>First</th>
-              <th>Last</th>
+              <th>Name</th>
               <th>Email</th>
+              <th>Phone</th>
               <th>Role</th>
-              <th style={{ minWidth: "160px" }}>Actions</th>
+              <th>Actions</th>
             </tr>
           </thead>
 
           <tbody>
             {users.map((u) => (
-              <tr key={u.user_id}>
-                <td>{u.user_id}</td>
+              <tr key={u.id}>
+                <td>{u.id}</td>
+
+                {/* PROFILE IMAGE FIXED HERE */}
                 <td>
                   <img
-                    src={u.profile || placeholderImage}
-                    alt={u.first_name}
-                    className="profile-img"
-                    onError={(e) => {
-                      e.currentTarget.onerror = null;
-                      e.currentTarget.src = placeholderImage;
+                    src={
+                      u.profile_image
+                        ? `${import.meta.env.VITE_API_URL}${u.profile_image}`
+                        : placeholderImage
+                    }
+                    alt="profile"
+                    style={{
+                      width: 50,
+                      height: 50,
+                      borderRadius: 6,
+                      objectFit: "cover",
                     }}
-                    style={{ width: 50, height: 50, objectFit: "cover", borderRadius: 4 }}
                   />
                 </td>
-                <td>{u.first_name}</td>
-                <td>{u.last_name}</td>
+
+                <td>{u.full_name}</td>
                 <td>{u.email}</td>
+                <td>{u.phone}</td>
                 <td>{u.role}</td>
+
                 <td>
                   <button className="edit-btn" onClick={() => openEditForm(u)}>
                     EDIT
                   </button>
 
-                  <button className="delete-btn" onClick={() => handleDelete(u.user_id)}>
+                  <button
+                    className="delete-btn"
+                    onClick={() => handleDelete(u.email)}
+                  >
                     DELETE
                   </button>
                 </td>
@@ -277,22 +199,16 @@ const ManageUser = () => {
         </table>
       </div>
 
-      {/* CREATE USER MODAL */}
+      {/* CREATE MODAL */}
       {createOpen && (
         <div className="modal">
           <div className="modal-content">
             <h2>Create User</h2>
 
             <input
-              placeholder="First Name"
-              value={newUser.first_name}
-              onChange={(e) => handleCreateChange("first_name", e.target.value)}
-            />
-
-            <input
-              placeholder="Last Name"
-              value={newUser.last_name}
-              onChange={(e) => handleCreateChange("last_name", e.target.value)}
+              placeholder="Full Name"
+              value={newUser.full_name}
+              onChange={(e) => handleCreateChange("full_name", e.target.value)}
             />
 
             <input
@@ -302,32 +218,36 @@ const ManageUser = () => {
             />
 
             <input
-              placeholder="Profile Image URL"
-              value={newUser.profile}
-              onChange={(e) => handleCreateChange("profile", e.target.value)}
+              placeholder="Phone"
+              value={newUser.phone}
+              onChange={(e) => handleCreateChange("phone", e.target.value)}
             />
 
-            <select value={newUser.role} onChange={(e) => handleCreateChange("role", e.target.value)}>
+            <select
+              value={newUser.role}
+              onChange={(e) => handleCreateChange("role", e.target.value)}
+            >
               <option value="">Select Role</option>
               {roles.map((r) => (
-                <option key={r} value={r}>
-                  {r}
-                </option>
+                <option key={r}>{r}</option>
               ))}
             </select>
+
+            <input
+              placeholder="Profile Image URL"
+              value={newUser.profile_image}
+              onChange={(e) =>
+                handleCreateChange("profile_image", e.target.value)
+              }
+            />
 
             <div className="modal-actions">
               <button className="save-btn" onClick={handleCreateSave}>
                 SAVE
               </button>
-
               <button
                 className="cancel-btn"
-                onClick={() => {
-                  setCreateOpen(false);
-                  setNewUser({ first_name: "", last_name: "", email: "", role: "", profile: "" });
-                  setErrorMsg("");
-                }}
+                onClick={() => setCreateOpen(false)}
               >
                 CANCEL
               </button>
@@ -336,38 +256,37 @@ const ManageUser = () => {
         </div>
       )}
 
-      {/* EDIT USER MODAL */}
+      {/* EDIT MODAL */}
       {editOpen && selectedUser && (
         <div className="modal">
           <div className="modal-content">
             <h2>Edit User</h2>
 
             <input
-              value={selectedUser.first_name}
-              onChange={(e) => handleEditChange("first_name", e.target.value)}
+              value={selectedUser.full_name}
+              onChange={(e) =>
+                handleEditChange("full_name", e.target.value)
+              }
             />
 
             <input
-              value={selectedUser.last_name}
-              onChange={(e) => handleEditChange("last_name", e.target.value)}
+              value={selectedUser.phone}
+              onChange={(e) => handleEditChange("phone", e.target.value)}
             />
 
             <input
-              value={selectedUser.email}
-              onChange={(e) => handleEditChange("email", e.target.value)}
+              value={selectedUser.profile_image || ""}
+              onChange={(e) =>
+                handleEditChange("profile_image", e.target.value)
+              }
             />
 
-            <input
-              value={selectedUser.profile || ""}
-              onChange={(e) => handleEditChange("profile", e.target.value)}
-            />
-
-            <select value={selectedUser.role || ""} onChange={(e) => handleEditChange("role", e.target.value)}>
-              <option value="">Select Role</option>
+            <select
+              value={selectedUser.role}
+              onChange={(e) => handleEditChange("role", e.target.value)}
+            >
               {roles.map((r) => (
-                <option key={r} value={r}>
-                  {r}
-                </option>
+                <option key={r}>{r}</option>
               ))}
             </select>
 
@@ -375,14 +294,9 @@ const ManageUser = () => {
               <button className="save-btn" onClick={handleEditSave}>
                 UPDATE
               </button>
-
               <button
                 className="cancel-btn"
-                onClick={() => {
-                  setEditOpen(false);
-                  setSelectedUser(null);
-                  setErrorMsg("");
-                }}
+                onClick={() => setEditOpen(false)}
               >
                 CANCEL
               </button>

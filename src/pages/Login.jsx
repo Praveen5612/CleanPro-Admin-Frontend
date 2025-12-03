@@ -1,58 +1,96 @@
 import React, { useState } from "react";
 import api from "../api/Axios";
-import { useNavigate } from "react-router-dom";
-import "../styles/Login.css";
+import { Link, useNavigate } from "react-router-dom";
+import "../styles/Auth.css";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
   const navigate = useNavigate();
+  const [msg, setMsg] = useState("");
 
-  const handleLogin = async () => {
-    setError("");
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+    role: "user",
+  });
 
-    if (!email.trim()) {
-      setError("Email is required");
-      return;
-    }
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMsg("");
 
     try {
-      const res = await api.post("/api/auth/login", { email });
+      const res = await api.post("/api/auth/login", form);
+      const { token, user } = res.data;
 
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
 
-      navigate("/dashboard");
-    } catch (err) {
-      console.log("LOGIN ERROR:", err.response?.data);
+      // Redirect based on role
+      switch (user.role) {
+        case "admin":
+          return navigate("/admin/dashboard");
 
-      const msg = err?.response?.data?.message || "Login failed";
+        case "cleaner":
+          return navigate("/cleaner-home");
 
-      // Show EXACT error to user
-      setError(msg);
+        case "partner":
+          return navigate("/partner-home");
+
+        default:
+          return navigate("/user-home");
+      }
+    } catch (error) {
+      setMsg(error.response?.data?.message || "Login failed");
     }
   };
 
   return (
-    <div className="login-container">
-      <div className="login-box">
-        <h2>Admin Login</h2>
+    <div className="auth-container">
+      <h2 className="auth-title">Login</h2>
 
+      <form onSubmit={handleSubmit}>
         <input
+          className="auth-input"
           type="email"
-          placeholder="Enter Admin Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          name="email"
+          placeholder="Email"
+          value={form.email}
+          onChange={handleChange}
+          required
         />
 
-        {error && (
-          <div className="popup-error">
-            {error}
-          </div>
-        )}
+        <input
+          className="auth-input"
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={form.password}
+          onChange={handleChange}
+          required
+        />
 
-        <button onClick={handleLogin}>LOGIN</button>
-      </div>
+        <select
+          className="auth-input"
+          name="role"
+          value={form.role}
+          onChange={handleChange}
+        >
+          <option value="admin">Admin</option>
+          <option value="partner">Partner</option>
+          <option value="cleaner">Cleaner</option>
+          <option value="user">User</option>
+        </select>
+
+        <button className="auth-btn">Login</button>
+      </form>
+
+      {msg && <p className="auth-msg">{msg}</p>}
+
+      <p className="auth-footer">
+        New user? <Link className="auth-link" to="/signup">Signup</Link>
+      </p>
     </div>
   );
 };

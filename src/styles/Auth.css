@@ -1,0 +1,144 @@
+/* --------------- GLOBAL RESET ---------------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+/* --------------- BODY BACKGROUND ---------------- */
+body {
+  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* --------------- CONTAINER ---------------- */
+.auth-container {
+  width: 420px;
+  padding: 40px 35px;
+  border-radius: 20px;
+
+  /* GLASS EFFECT */
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --------------- TITLE ---------------- */
+.auth-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 25px;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+/* --------------- INPUT FIELDS ---------------- */
+.auth-input {
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 15px;
+
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid transparent;
+  color: #fff;
+
+  border-radius: 12px;
+  font-size: 15px;
+
+  transition: all 0.25s ease;
+}
+
+.auth-input::placeholder {
+  color: #ddd;
+}
+
+.auth-input:focus {
+  outline: none;
+  border: 2px solid #00d4ff;
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 12px rgba(0, 212, 255, 0.5);
+}
+
+/* --------------- SELECT DROPDOWN ---------------- */
+.auth-select {
+  appearance: none;
+  cursor: pointer;
+}
+
+/* --------------- BUTTON ---------------- */
+.auth-btn {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #00d4ff, #007bff);
+  border: none;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 600;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  margin-top: 5px;
+}
+
+.auth-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(0, 212, 255, 0.6);
+}
+
+/* --------------- MESSAGE ---------------- */
+.auth-msg {
+  color: #ff6b6b;
+  margin-top: 10px;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* --------------- LINK ---------------- */
+.auth-link {
+  color: #00d4ff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.auth-link:hover {
+  text-decoration: underline;
+}
+
+/* --------------- FOOTER TEXT ---------------- */
+.auth-footer {
+  color: #fff;
+  text-align: center;
+  font-size: 14px;
+  margin-top: 15px;
+}
+
+/* --------------- RESPONSIVE ---------------- */
+@media (max-width: 500px) {
+  .auth-container {
+    width: 90%;
+    padding: 30px 20px;
+  }
+  .auth-title {
+    font-size: 26px;
+  }
+}

@@ -1,60 +1,147 @@
+/* ============================================
+   PERFECT PREMIUM SIDEBAR (Dark + Glass)
+   ============================================ */
 .sidebar {
-  width: 230px;
+  width: 250px;
   height: 100vh;
-  background: white;
-  border-right: 1px solid #e3e3e3;
-  padding: 15px;
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  background: rgba(17, 24, 39, 0.7); /* Deep transparent navy */
+  backdrop-filter: blur(18px);        /* Glass effect */
+  -webkit-backdrop-filter: blur(18px);
+
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 4px 0 25px rgba(0, 0, 0, 0.45);
+
   display: flex;
   flex-direction: column;
+  padding: 25px 18px;
+
+  animation: sidebarSlide 0.5s ease-out;
+  z-index: 999;
 }
 
+@keyframes sidebarSlide {
+  from {
+    opacity: 0;
+    transform: translateX(-25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ============================================
+   LOGO AREA
+   ============================================ */
 .logo-container {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 30px;
+  justify-content: start;
+  gap: 12px;
 }
 
 .logo {
-  width: 50px;
-  height: 50px;
-  border-radius: 10px;
+  width: 58px;
+  height: 58px;
+  border-radius: 14px;
+  object-fit: cover;
+  box-shadow: 0 0 15px rgba(0, 200, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-.menu-icon {
-  font-size: 22px;
-  color: #333;
-  cursor: pointer;
-}
-
+/* ============================================
+   MENU LIST
+   ============================================ */
 .menu-list {
   list-style: none;
   padding: 0;
+  margin-top: 35px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
+/* ============================================
+   MENU ITEM
+   ============================================ */
 .menu-item {
   display: flex;
   align-items: center;
-  padding: 12px 10px;
-  border-radius: 8px;
-  font-size: 15px;
-  color: #333;
+  gap: 14px;
+
+  padding: 14px 16px;
+  border-radius: 12px;
+
+  background: rgba(255, 255, 255, 0.02);
+  color: #d1d5db;
+
   text-decoration: none;
-  margin-bottom: 8px;
-  transition: 0.2s;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+
+  transition: all 0.28s ease;
+  border: 1px solid transparent;
 }
 
-.menu-item .icon {
-  margin-right: 10px;
-  font-size: 17px;
-}
-
+/* Hover – Neon glow */
 .menu-item:hover {
-  background: #e8efe7;
+  background: rgba(0, 200, 255, 0.12);
+  color: white;
+  transform: translateX(6px);
+
+  border-color: rgba(0, 200, 255, 0.4);
+  box-shadow: 0 6px 18px rgba(0, 200, 255, 0.25);
 }
 
-.active {
-  background: #d5e5d4;
-  color: #000;
-  font-weight: 600;
+/* Active – Blue premium badge */
+.menu-item.active {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  color: white;
+
+  box-shadow: 0 6px 25px rgba(37, 99, 235, 0.45);
+  transform: translateX(6px);
+
+  border-color: #2563eb;
+}
+
+/* ============================================
+   ICONS
+   ============================================ */
+.icon {
+  font-size: 22px;
+  color: #93c5fd;
+  transition: all 0.28s ease;
+}
+
+.menu-item:hover .icon {
+  color: #ffffff;
+  transform: scale(1.15);
+}
+
+.menu-item.active .icon {
+  color: #ffffff;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 770px) {
+  .sidebar {
+    width: 190px;
+  }
+}
+
+.logout-item {
+  margin-top: 30px;
+  color: #f87171; /* light red */
+}
+
+.logout-item:hover {
+  background: rgba(255, 0, 0, 0.15);
+  color: #ff6b6b;
 }

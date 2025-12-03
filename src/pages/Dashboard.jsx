@@ -2,37 +2,50 @@
 import React, { useEffect, useState } from "react";
 import api from "../api/Axios.js";
 import "../styles/Dashboard.css";
+import "../styles/Layout.css"
+
 
 const API = "/api/users";
 
 const Dashboard = () => {
+  const token = localStorage.getItem("token");
+
+  // If token missing – redirect immediately BEFORE rendering
+  if (!token) {
+    window.location.href = "/";
+    return null; 
+  }
+
   const [stats, setStats] = useState({
+    total_users: 0,
     admin_count: 0,
     user_count: 0,
     partner_count: 0,
     cleaner_count: 0,
   });
 
-
-  if (!localStorage.getItem("token")) {
-  window.location.href = "/";
-  return null;
-}
-
-
   const loadStats = async () => {
     try {
       const res = await api.get(`${API}/stats/all`);
       const data = res.data || {};
+
       setStats({
+        total_users: data.total_users ?? 0,
         admin_count: data.admin_count ?? 0,
         user_count: data.user_count ?? 0,
         partner_count: data.partner_count ?? 0,
         cleaner_count: data.cleaner_count ?? 0,
       });
+
     } catch (err) {
-      console.error("Error loading stats:", err);
-      // keep default zeroed stats on error
+      console.error("Stats error:", err);
+
+      // If backend returns auth error → redirect to login
+      if (err.response?.status === 401 || err.response?.status === 403) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        window.location.href = "/";
+      }
     }
   };
 
@@ -41,8 +54,8 @@ const Dashboard = () => {
   }, []);
 
   const cards = [
+    { label: "Total Users", count: stats.total_users },
     { label: "Admins", count: stats.admin_count },
-    { label: "Users", count: stats.user_count },
     { label: "Partners", count: stats.partner_count },
     { label: "Cleaners", count: stats.cleaner_count },
   ];
