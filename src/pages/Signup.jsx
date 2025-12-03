@@ -129,7 +129,7 @@ const Signup = () => {
           name="password"
           className="auth-input"
           type="password"
-          placeholder="Password"
+          placeholder=" must be 1 caps and 1 spl"
           value={form.password}
           onChange={handleChange}
           required
@@ -146,7 +146,7 @@ const Signup = () => {
 
           {showDropdown && (
             <div className="dropdown-menu">
-              {["admin", "partner", "cleaner", "user"].map((item) => (
+              {["admin", "partner", "cleaner"].map((item) => (
                 <div
                   key={item}
                   className="dropdown-option"

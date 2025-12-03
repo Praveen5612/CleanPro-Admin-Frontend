@@ -80,7 +80,7 @@ const Login = () => {
 
           {showDropdown && (
             <div className="dropdown-menu">
-              {["admin", "partner", "cleaner", "user"].map((item) => (
+              {["admin", "partner", "cleaner"].map((item) => (
                 <div
                   key={item}
                   className="dropdown-option"
