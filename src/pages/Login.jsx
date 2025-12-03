@@ -13,6 +13,8 @@ const Login = () => {
     role: "user",
   });
 
+  const [showDropdown, setShowDropdown] = useState(false);
+
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -27,17 +29,13 @@ const Login = () => {
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 
-      // Redirect based on role
       switch (user.role) {
         case "admin":
           return navigate("/admin/dashboard");
-
         case "cleaner":
           return navigate("/cleaner-home");
-
         case "partner":
           return navigate("/partner-home");
-
         default:
           return navigate("/user-home");
       }
@@ -71,17 +69,32 @@ const Login = () => {
           required
         />
 
-        <select
-          className="auth-input"
-          name="role"
-          value={form.role}
-          onChange={handleChange}
-        >
-          <option value="admin">Admin</option>
-          <option value="partner">Partner</option>
-          <option value="cleaner">Cleaner</option>
-          <option value="user">User</option>
-        </select>
+        {/* ---------------- CUSTOM ANIMATED DROPDOWN ---------------- */}
+        <div className="custom-dropdown">
+          <div
+            className="dropdown-selected"
+            onClick={() => setShowDropdown(!showDropdown)}
+          >
+            {form.role.charAt(0).toUpperCase() + form.role.slice(1)}
+          </div>
+
+          {showDropdown && (
+            <div className="dropdown-menu">
+              {["admin", "partner", "cleaner", "user"].map((item) => (
+                <div
+                  key={item}
+                  className="dropdown-option"
+                  onClick={() => {
+                    setForm({ ...form, role: item });
+                    setShowDropdown(false);
+                  }}
+                >
+                  {item.charAt(0).toUpperCase() + item.slice(1)}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
         <button className="auth-btn">Login</button>
       </form>
@@ -89,7 +102,10 @@ const Login = () => {
       {msg && <p className="auth-msg">{msg}</p>}
 
       <p className="auth-footer">
-        New user? <Link className="auth-link" to="/signup">Signup</Link>
+        New user?{" "}
+        <Link className="auth-link" to="/signup">
+          Signup
+        </Link>
       </p>
     </div>
   );

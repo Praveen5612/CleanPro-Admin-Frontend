@@ -15,28 +15,70 @@ const Signup = () => {
 
   const [profileImage, setProfileImage] = useState(null);
   const [msg, setMsg] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+  // -------------------------------
+  // VALIDATION FUNCTIONS
+  // -------------------------------
 
-  const handleImage = (e) => {
-    setProfileImage(e.target.files[0]);
+  const isValidGmail = (email) => /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email);
+
+  const isValidPhone = (phone) => /^[0-9]{10}$/.test(phone);
+
+  const isValidPassword = (password) => {
+    return /^(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/.test(password);
   };
+
+  // -------------------------------
+  // HANDLE CHANGE WITH PHONE LIMIT
+  // -------------------------------
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    // limit phone input to 10 digits
+    if (name === "phone") {
+      const digitsOnly = value.replace(/\D/g, ""); // allow only numbers
+      if (digitsOnly.length > 10) return; // stop at 10
+      setForm({ ...form, phone: digitsOnly });
+      return;
+    }
+
+    setForm({ ...form, [name]: value });
+  };
+
+  const handleImage = (e) => setProfileImage(e.target.files[0]);
+
+  // -------------------------------
+  // HANDLE SUBMIT
+  // -------------------------------
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMsg("");
 
+    if (!isValidGmail(form.email)) {
+      setMsg("Email must be a valid Gmail address (example@gmail.com)");
+      return;
+    }
+
+    if (!isValidPhone(form.phone)) {
+      setMsg("Phone number must be exactly 10 digits.");
+      return;
+    }
+
+    if (!isValidPassword(form.password)) {
+      setMsg(
+        "Password must be at least 8 characters, include one uppercase letter and one special symbol."
+      );
+      return;
+    }
+
     try {
       const fd = new FormData();
-
       Object.keys(form).forEach((key) => fd.append(key, form[key]));
+      if (profileImage) fd.append("profile_image", profileImage);
 
-      if (profileImage) {
-        fd.append("profile_image", profileImage);
-      }
-
-      // ⬅⬅⬅ FIXED — USE api instance WITH .env BASE URL
       await api.post("/api/auth/signup", fd, {
         headers: { "Content-Type": "multipart/form-data" },
       });
@@ -66,7 +108,7 @@ const Signup = () => {
           name="email"
           className="auth-input"
           type="email"
-          placeholder="Email"
+          placeholder="Gmail Address"
           value={form.email}
           onChange={handleChange}
           required
@@ -76,9 +118,10 @@ const Signup = () => {
           name="phone"
           className="auth-input"
           type="tel"
-          placeholder="Phone"
+          placeholder="10-digit Phone Number"
           value={form.phone}
           onChange={handleChange}
+          maxLength={10}
           required
         />
 
@@ -92,17 +135,32 @@ const Signup = () => {
           required
         />
 
-        <select
-          name="role"
-          className="auth-input"
-          value={form.role}
-          onChange={handleChange}
-        >
-          <option value="admin">Admin</option>
-          <option value="partner">Partner</option>
-          <option value="cleaner">Cleaner</option>
-          <option value="user">User</option>
-        </select>
+        {/* ---------------- CUSTOM DROPDOWN ---------------- */}
+        <div className="custom-dropdown">
+          <div
+            className="dropdown-selected"
+            onClick={() => setShowDropdown(!showDropdown)}
+          >
+            {form.role.charAt(0).toUpperCase() + form.role.slice(1)}
+          </div>
+
+          {showDropdown && (
+            <div className="dropdown-menu">
+              {["admin", "partner", "cleaner", "user"].map((item) => (
+                <div
+                  key={item}
+                  className="dropdown-option"
+                  onClick={() => {
+                    setForm({ ...form, role: item });
+                    setShowDropdown(false);
+                  }}
+                >
+                  {item.charAt(0).toUpperCase() + item.slice(1)}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
         <input
           type="file"

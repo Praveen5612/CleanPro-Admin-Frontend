@@ -1,205 +1,333 @@
-/* ---------------------------- 
-   MAIN PAGE LAYOUT 
------------------------------ */
+/* =====================================================
+   ManageUser.css
+   - Upgraded to match glass/neon theme used across app
+   - Sidebar-safe layout (no overlap)
+   - Modern table, cards, modals, responsive
+   ===================================================== */
+
+/* -----------------------
+   Theme variables
+   ----------------------- */
+:root {
+  --sidebar-width: 250px;
+  --sidebar-width-collapsed: 190px;
+
+  --bg-card: rgba(255,255,255,0.04);
+  --glass-weak: rgba(255,255,255,0.06);
+  --glass-strong: rgba(255,255,255,0.10);
+
+  --accent-neon: #00d4ff;
+  --accent-blue: #314fdf;
+  --danger: #ff3b4a;
+
+  --muted: #bfbfbf;
+  --text: #ffffff;
+}
+
+/* -----------------------
+   Page layout / sidebar-safe
+   ----------------------- */
 .user-container {
-  padding: 20px;
-  width: 100%;
+  padding: 36px 48px;
+  min-height: 100vh;
+  color: #ffffff;;
+
+  margin-left: var(--sidebar-width); /* keeps content right of fixed sidebar */
+  transition: margin-left 0.25s ease, padding 0.25s ease;
 }
 
+/* If your parent uses a collapsed sidebar on smaller screens */
+@media (max-width: 770px) {
+  .user-container {
+    margin-left: var(--sidebar-width-collapsed);
+    padding: 28px 22px;
+  }
+}
 
+/* For setups where sidebar is sibling .sidebar ~ .app-content apply .app-content.user-container
+   (no extra CSS required; margin-left still applies) */
+
+/* -----------------------
+   Header / actions
+   ----------------------- */
 .title {
-  font-size: 32px;
-  font-weight: 700;
+  font-size: 30px;
+  font-weight: 800;
+  margin-bottom: 18px;
+  letter-spacing: 0.6px;
 }
 
-.subtitle {
-  font-size: 16px;
-  color: #777;
-  margin-bottom: 20px;
-}
-
-/* CREATE BUTTON */
+/* Create button matches auth buttons */
 .create-btn {
-  background: #2f57d1;
-  color: white;
-  font-size: 16px;
-  padding: 10px 22px;
+  background: linear-gradient(135deg, var(--accent-neon), #007bff);
+  color: #fff;
+  font-size: 15px;
+  padding: 10px 18px;
   border: none;
-  border-radius: 6px;
+  border-radius: 10px;
   cursor: pointer;
-  margin-bottom: 20px;
-  transition: 0.2s;
+  margin-bottom: 18px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  box-shadow: 0 6px 18px rgba(0, 212, 255, 0.08);
 }
 
 .create-btn:hover {
-  background: #1f43b3;
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0, 212, 255, 0.14);
 }
 
-/* ---------------------------- 
-   USER TABLE 
------------------------------ */
+/* -----------------------
+   Table wrapper (glass card)
+   ----------------------- */
 .table-wrapper {
-  background: white;
-  border-radius: 10px;
-  padding: 5px;
-  border: 1px solid #ddd;
+  background: var(--bg-card);
+  border-radius: 14px;
+  padding: 12px;
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.45);
+  overflow: auto;
 }
 
+/* Table basic layout */
 .user-table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 820px; /* keeps table from collapsing too narrow on larger screens */
 }
 
-.user-table th {
+/* Header row */
+.user-table thead th {
   text-align: left;
-  background: #f5f5f5;
-  padding: 12px;
-  font-size: 15px;
-}
-
-.user-table td {
-  padding: 14px;
-  border-top: 1px solid #eee;
-  font-size: 15px;
-}
-
-.profile-img {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #ddd;
-}
-
-/* ACTION BUTTONS */
-.edit-btn {
-  background: #314fdf;
-  border: none;
-  color: white;
-  padding: 6px 14px;
+  padding: 14px 16px;
   font-size: 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-right: 8px;
-  transition: 0.2s;
+  color: var(--muted);
+  background: transparent;
+  position: sticky;
+  top: 0;
+  backdrop-filter: blur(6px);
 }
 
-.edit-btn:hover {
-  background: #1e38b5;
+/* Body rows */
+.user-table tbody tr {
+  transition: background 0.18s ease, transform 0.18s ease;
 }
+
+.user-table tbody tr:hover {
+  background: rgba(70, 67, 67, 0.098);
+  transform: translateY(-2px);
+}
+
+/* Cells */
+.user-table td {
+  padding: 14px 16px;
+  border-top: 1px solid rgba(255,255,255,0.03);
+  vertical-align: middle;
+  font-size: 14px;
+  color: var(--text);
+}
+
+/* Profile image */
+.profile-img {
+  width: 54px;
+  height: 54px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+/* Role pill */
+.role-pill {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 13px;
+  color: #0f172a;
+}
+
+.role-admin { background: linear-gradient(135deg,#ffd7a8,#ffb86b); }
+.role-partner { background: linear-gradient(135deg,#b6e3ff,#7fc8ff); }
+.role-cleaner { background: linear-gradient(135deg,#d6f5d6,#9ef09e); }
+.role-user { background: linear-gradient(135deg,#d6d6ff,#b4b4ff); }
+
+/* -----------------------
+   Action buttons (table)
+   ----------------------- */
+.edit-btn, .delete-btn {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+}
+
+.edit-btn {
+  background: linear-gradient(135deg, #5b78ff, #314fdf);
+  color: #fff;
+  margin-right: 8px;
+}
+.edit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(49,79,223,0.16); }
 
 .delete-btn {
-  background: #ff0037;
-  border: none;
-  color: white;
-  padding: 6px 14px;
-  font-size: 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: 0.2s;
+  background: linear-gradient(135deg, #ff6b6b, #ff3b4a);
+  color: #fff;
+}
+.delete-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255,59,74,0.14); }
+
+/* -----------------------
+   Empty / error state
+   ----------------------- */
+.table-empty {
+  text-align: center;
+  padding: 36px;
+  color: var(--muted);
 }
 
-.delete-btn:hover {
-  background: #c9002c;
-}
-
-/* ---------------------------- 
-   MODAL OVERLAY & CONTENT 
------------------------------ */
+/* -----------------------
+   MODAL (glass-style)
+   ----------------------- */
 .modal {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(30, 30, 30, 0.55);
+  inset: 0;
+  background: rgba(6,6,10,0.6);
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 2000;
-  animation: fadeIn 0.2s ease-in;
+  justify-content: center;
+  z-index: 3000;
+  animation: modalFade 0.16s ease;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+@keyframes modalFade { from { opacity: 0; } to { opacity: 1; } }
 
 .modal-content {
-  background: #fff;
-  width: 420px;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
-  animation: slideUp 0.25s ease;
+  width: 460px;
+  max-width: calc(100% - 40px);
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.06);
+  backdrop-filter: blur(10px);
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+  animation: modalSlide 0.22s cubic-bezier(.2,.9,.3,1);
 }
 
-@keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+@keyframes modalSlide {
+  from { transform: translateY(12px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
 }
 
 .modal-content h2 {
-  margin-bottom: 18px;
+  margin: 0 0 14px 0;
+  font-size: 20px;
   text-align: center;
-  font-size: 22px;
+  color: var(--text);
 }
 
-/* ---------------------------- 
-   FORM INPUTS 
------------------------------ */
+/* modal form inputs */
 .modal-content input,
 .modal-content select {
   width: 100%;
-  padding: 12px;
-  margin-bottom: 14px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 15px;
-  transition: 0.2s;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(10,10,14,0.35);
+  color: var(--text);
+  font-size: 14px;
+  transition: box-shadow 0.14s ease, border-color 0.14s ease;
 }
+.modal-content input::placeholder { color: rgba(255,255,255,0.45); }
 
 .modal-content input:focus,
 .modal-content select:focus {
-  border-color: #314fdf;
-  box-shadow: 0 0 4px rgba(49, 79, 223, 0.4);
+  outline: none;
+  border-color: var(--accent-neon);
+  box-shadow: 0 6px 20px rgba(0,212,255,0.08);
 }
 
-/* ---------------------------- 
-   SAVE / CANCEL BUTTONS 
------------------------------ */
+/* modal actions */
 .modal-actions {
   display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 6px;
 }
 
+/* Save / Cancel buttons */
 .save-btn {
-  background: #2ecc71;
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
   color: white;
   border: none;
-  padding: 10px 20px;
-  font-size: 15px;
+  padding: 10px 18px;
+  border-radius: 10px;
   cursor: pointer;
-  border-radius: 6px;
-  transition: 0.2s;
+  font-weight: 700;
 }
-
-.save-btn:hover {
-  background: #27ae60;
-}
+.save-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(39,174,96,0.12); }
 
 .cancel-btn {
-  background: #ff4757;
+  background: linear-gradient(135deg, #ff6b6b, #ff3b4a);
   color: white;
   border: none;
-  padding: 10px 20px;
-  font-size: 15px;
+  padding: 10px 18px;
+  border-radius: 10px;
   cursor: pointer;
-  border-radius: 6px;
-  transition: 0.2s;
+  font-weight: 700;
+}
+.cancel-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(255,59,74,0.12); }
+
+/* -----------------------
+   Responsive adjustments
+   ----------------------- */
+@media (max-width: 980px) {
+  .user-container { padding: 20px 22px; margin-left: var(--sidebar-width-collapsed); }
+  .modal-content { width: 94%; padding: 18px; }
+  .user-table { min-width: 700px; }
 }
 
-.cancel-btn:hover {
-  background: #e84141;
+@media (max-width: 700px) {
+  .user-table { min-width: 560px; }
+  .user-container { margin-left: 12px; padding: 18px; }
+
+  /* compact rows */
+  .user-table thead th, .user-table td { padding: 10px 8px; font-size: 13px; }
+
+  /* stack layout fallback: use horizontal scroll inside wrapper */
+  .table-wrapper { overflow-x: auto; }
+}
+
+/* -----------------------
+   Utility helpers
+   ----------------------- */
+.text-muted { color: var(--muted); font-size: 13px; }
+.row { display:flex; gap:12px; align-items:center; }
+.center { display:flex; align-items:center; justify-content:center; }
+
+/* -----------------------
+   Quick role badge accessor (apply in JSX if desired)
+   ----------------------- */
+/* Example usage: <span className={`role-pill role-${role}`}>{role}</span> */
+
+/* Ensure action buttons are laid out horizontally */
+.user-table td:last-child,
+.user-table td.actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-start; /* or center / flex-end as you prefer */
+  white-space: nowrap;          /* prevents buttons from wrapping to next line */
+  padding-right: 12px;          /* small padding so buttons aren't flush with edge */
+}
+
+/* Make sure buttons don't expand to full width */
+.user-table td:last-child .edit-btn,
+.user-table td:last-child .delete-btn,
+.user-table td.actions .edit-btn,
+.user-table td.actions .delete-btn {
+  display: inline-flex;
+  flex: 0 0 auto;
+  min-width: 82px;   /* keeps buttons same width — tweak as needed */
+  padding: 8px 12px;
 }

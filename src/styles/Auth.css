@@ -1,4 +1,6 @@
-/* --------------- GLOBAL RESET ---------------- */
+/* --------------------------------------------------
+   GLOBAL RESET
+-------------------------------------------------- */
 * {
   margin: 0;
   padding: 0;
@@ -6,7 +8,9 @@
   font-family: "Poppins", sans-serif;
 }
 
-/* --------------- BODY BACKGROUND ---------------- */
+/* --------------------------------------------------
+   PAGE BACKGROUND
+-------------------------------------------------- */
 body {
   background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
   min-height: 100vh;
@@ -15,13 +19,14 @@ body {
   align-items: center;
 }
 
-/* --------------- CONTAINER ---------------- */
+/* --------------------------------------------------
+   AUTH CONTAINER (Glass Card)
+-------------------------------------------------- */
 .auth-container {
   width: 420px;
   padding: 40px 35px;
   border-radius: 20px;
 
-  /* GLASS EFFECT */
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(14px);
 
@@ -31,6 +36,7 @@ body {
   animation: fadeIn 0.8s ease-in-out;
 }
 
+/* Fade animation */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -42,7 +48,9 @@ body {
   }
 }
 
-/* --------------- TITLE ---------------- */
+/* --------------------------------------------------
+   PAGE TITLE
+-------------------------------------------------- */
 .auth-title {
   font-size: 32px;
   font-weight: 700;
@@ -52,7 +60,9 @@ body {
   letter-spacing: 1px;
 }
 
-/* --------------- INPUT FIELDS ---------------- */
+/* --------------------------------------------------
+   INPUT FIELDS
+-------------------------------------------------- */
 .auth-input {
   width: 100%;
   padding: 12px 14px;
@@ -79,13 +89,76 @@ body {
   box-shadow: 0 0 12px rgba(0, 212, 255, 0.5);
 }
 
-/* --------------- SELECT DROPDOWN ---------------- */
-.auth-select {
-  appearance: none;
-  cursor: pointer;
+/* --------------------------------------------------
+   CUSTOM DROPDOWN (Login + Signup)
+-------------------------------------------------- */
+.custom-dropdown {
+  width: 100%;
+  position: relative;
+  margin-bottom: 15px;
 }
 
-/* --------------- BUTTON ---------------- */
+.dropdown-selected {
+  padding: 12px 14px;
+  border-radius: 12px;
+
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+
+  border: 2px solid transparent;
+  cursor: pointer;
+
+  transition: all 0.25s ease;
+}
+
+.dropdown-selected:hover {
+  border-color: #00d4ff;
+  box-shadow: 0 0 12px rgba(0, 212, 255, 0.5);
+}
+
+/* Dropdown menu */
+.dropdown-menu {
+  position: absolute;
+  top: 110%;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+
+  background: rgba(20, 20, 35, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  animation: dropdownFade 0.22s ease-out;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes dropdownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Dropdown option */
+.dropdown-option {
+  padding: 12px 14px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dropdown-option:hover {
+  background: rgba(0, 200, 255, 0.25);
+  padding-left: 20px;
+}
+
+/* --------------------------------------------------
+   BUTTON (Login + Signup)
+-------------------------------------------------- */
 .auth-btn {
   width: 100%;
   padding: 12px;
@@ -105,7 +178,9 @@ body {
   box-shadow: 0 5px 20px rgba(0, 212, 255, 0.6);
 }
 
-/* --------------- MESSAGE ---------------- */
+/* --------------------------------------------------
+   ERROR MESSAGE
+-------------------------------------------------- */
 .auth-msg {
   color: #ff6b6b;
   margin-top: 10px;
@@ -113,7 +188,16 @@ body {
   font-size: 14px;
 }
 
-/* --------------- LINK ---------------- */
+/* --------------------------------------------------
+   FOOTER / LINKS
+-------------------------------------------------- */
+.auth-footer {
+  color: #fff;
+  text-align: center;
+  font-size: 14px;
+  margin-top: 15px;
+}
+
 .auth-link {
   color: #00d4ff;
   text-decoration: none;
@@ -124,15 +208,9 @@ body {
   text-decoration: underline;
 }
 
-/* --------------- FOOTER TEXT ---------------- */
-.auth-footer {
-  color: #fff;
-  text-align: center;
-  font-size: 14px;
-  margin-top: 15px;
-}
-
-/* --------------- RESPONSIVE ---------------- */
+/* --------------------------------------------------
+   RESPONSIVE
+-------------------------------------------------- */
 @media (max-width: 500px) {
   .auth-container {
     width: 90%;

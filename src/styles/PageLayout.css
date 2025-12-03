@@ -1,0 +1,135 @@
+/* =======================================================
+   CLEANERS & PARTNERS PAGE LAYOUT (Do NOT apply to Users)
+   ======================================================= */
+
+:root {
+  --sidebar-width: 250px;
+  --bg-dark: #0b1120;
+  --text-light: #e7eef8;
+  --text-muted: #9ba8bf;
+
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.06);
+  --glass-hover: rgba(255, 255, 255, 0.05);
+
+  --shadow-strong: rgba(0, 0, 0, 0.55);
+}
+
+/* ----------------------------------------------
+   MAIN PAGE CONTAINER
+----------------------------------------------- */
+.user-container {
+  margin-left: var(--sidebar-width);
+  width: calc(100% - var(--sidebar-width));
+  min-height: 100vh;
+
+  padding: 40px 50px;
+  background: var(--bg-dark);
+  color: var(--text-light);
+
+  transition: margin-left 0.25s ease;
+}
+
+/* sidebar collapsed on small screens */
+@media (max-width: 770px) {
+  .user-container {
+    margin-left: 190px;
+    width: calc(100% - 190px);
+    padding: 28px 22px;
+  }
+}
+
+/* ----------------------------------------------
+   PAGE TITLE
+----------------------------------------------- */
+.title {
+  font-size: 32px;
+  font-weight: 800;
+  padding: 10px 20px;
+  margin-bottom: 25px;
+
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  border: 1px solid var(--glass-border);
+}
+
+/* ----------------------------------------------
+   TABLE WRAPPER (Glass Card)
+----------------------------------------------- */
+.table-wrapper {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+
+  padding: 14px;
+  width: 100%;
+  overflow-x: auto;
+
+  box-shadow: 0 8px 28px var(--shadow-strong);
+}
+
+/* ----------------------------------------------
+   USER TABLE
+----------------------------------------------- */
+.user-table {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
+  color: var(--text-light);
+}
+
+/* HEADER */
+.user-table thead {
+  background: rgba(255,255,255,0.05);
+}
+
+.user-table th {
+  padding: 16px 20px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.4px;
+}
+
+/* TABLE ROWS */
+.user-table tbody tr {
+  transition: 0.2s ease;
+}
+
+.user-table tbody tr:hover {
+  background: var(--glass-hover);
+  transform: translateY(-2px);
+}
+
+/* CELLS */
+.user-table td {
+  padding: 14px 20px;
+  font-size: 15px;
+  border-top: 1px solid rgba(255,255,255,0.04);
+}
+
+/* PROFILE IMAGE */
+.user-table img {
+  width: 54px;
+  height: 54px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.45);
+}
+
+/* EMPTY STATE */
+.user-table td[colspan] {
+  text-align: center;
+  padding: 26px;
+  font-size: 16px;
+  color: var(--text-muted);
+}
+
+/* RESPONSIVE TABLE */
+@media (max-width: 600px) {
+  .user-table {
+    min-width: 580px;
+  }
+}

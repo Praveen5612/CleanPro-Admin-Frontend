@@ -1,52 +1,113 @@
+/* --------------------------------------------------
+   DASHBOARD LAYOUT (No Sidebar Conflict)
+   -------------------------------------------------- */
+
+/* This ensures dashboard content never goes under the sidebar */
 .dashboard-container {
-  width: 100%;
+  padding: 40px 50px;
+  min-height: 100vh;
+  margin-left: 250px;       /* space for sidebar width */
+  color: #ffffff;
+  transition: margin-left 0.25s ease;
 }
 
+/* When sidebar collapses on small screens */
+@media (max-width: 770px) {
+  .dashboard-container {
+    margin-left: 190px;     /* smaller sidebar width */
+    padding: 30px 20px;
+  }
+}
+
+/* --------------------------------------------------
+   DASHBOARD TITLE
+   -------------------------------------------------- */
 .dashboard-title {
-  font-size: 26px;
+  font-size: 32px;
   font-weight: 700;
-  margin-bottom: 20px;
-  color: white;
+  margin-bottom: 30px;
+  color: #ffffff;
+  letter-spacing: 1px;
 }
 
+/* --------------------------------------------------
+   CARD GRID (Flex Layout)
+   -------------------------------------------------- */
 .dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 24px;
 }
 
+/* --------------------------------------------------
+   CARD STYLE
+   -------------------------------------------------- */
 .dashboard-card {
-  background: #111827;
-  border-radius: 14px;
+  width: calc(50% - 24px);
+  min-width: 260px;
+
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(10px);
+
+  border-radius: 16px;
   padding: 22px;
-  border: 1px solid rgba(255,255,255,0.08);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+
+  transition: all 0.3s ease;
 }
 
+/* Hover animation */
+.dashboard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 200, 255, 0.25);
+  border-color: rgba(0, 200, 255, 0.4);
+}
+
+/* --------------------------------------------------
+   ICON BOX
+   -------------------------------------------------- */
 .card-icon-holder {
-  width: 50px;
-  height: 50px;
-  border-radius: 10px;
-  background: rgba(255,255,255,0.06);
+  width: 55px;
+  height: 55px;
+  border-radius: 12px;
+
+  background: rgba(255, 255, 255, 0.08);
   display: flex;
   justify-content: center;
   align-items: center;
+
+  margin-bottom: 12px;
 }
 
 .card-icon {
-  font-size: 26px;
-  color: #b48cff;
+  font-size: 28px;
+  color: #6ea8ff;
 }
 
+/* --------------------------------------------------
+   COUNT + LABEL
+   -------------------------------------------------- */
 .count {
-  margin-top: 10px;
-  font-size: 40px;
-  font-weight: 800;
-  color: white;
+  font-size: 42px;
+  font-weight: 900;
+  margin-top: 8px;
+  color: #ffffff;
 }
 
 .label {
   margin-top: 4px;
-  opacity: 0.8;
-  color: #ccc;
+  font-size: 16px;
+  color: #bfbfbf;
+  letter-spacing: 0.5px;
+}
+
+/* --------------------------------------------------
+   MOBILE VIEW
+   -------------------------------------------------- */
+@media (max-width: 600px) {
+  .dashboard-card {
+    width: 100%;
+  }
 }

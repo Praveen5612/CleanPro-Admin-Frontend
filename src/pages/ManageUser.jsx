@@ -13,7 +13,7 @@ const ManageUser = () => {
   const [errorMsg, setErrorMsg] = useState("");
 
   const placeholderImage = "https://placehold.co/60x60";
-  const BASE_URL = "http://localhost:5000"; // Base backend URL
+  const BASE = "https://cleanpro-admin-backend.onrender.com";
   const roles = ["admin", "partner", "cleaner", "user"];
 
   // AUTH CHECK

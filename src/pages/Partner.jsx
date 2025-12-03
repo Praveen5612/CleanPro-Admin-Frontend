@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "../api/Axios";
-import "../styles/Cleaner.css"; // reuse same table CSS
+import "../styles/PageLayout.css"
 
 const Partner = () => {
   const [partners, setPartners] = useState([]);
