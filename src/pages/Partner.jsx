@@ -57,11 +57,7 @@ const Partner = () => {
 
                 <td>
                   <img
-                    src={
-                      u.profile_image
-                        ? `${import.meta.env.VITE_API_URL}${u.profile_image}`
-                        : placeholderImage
-                    }
+                    src={u.profile_image ? u.profile_image : placeholderImage}
                     alt="profile"
                     style={{
                       width: 50,
