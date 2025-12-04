@@ -10,6 +10,7 @@ const Signup = () => {
     email: "",
     phone: "",
     password: "",
+    confirm_password: "",
     role: "user",
   });
 
@@ -17,29 +18,31 @@ const Signup = () => {
   const [msg, setMsg] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+
   // -------------------------------
   // VALIDATION FUNCTIONS
   // -------------------------------
 
-  const isValidGmail = (email) => /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email);
+  const isValidGmail = (email) =>
+    /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email);
 
   const isValidPhone = (phone) => /^[0-9]{10}$/.test(phone);
 
-  const isValidPassword = (password) => {
-    return /^(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/.test(password);
-  };
+  const isValidPassword = (password) =>
+    /^(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/.test(password);
 
   // -------------------------------
-  // HANDLE CHANGE WITH PHONE LIMIT
+  // HANDLE CHANGE
   // -------------------------------
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // limit phone input to 10 digits
     if (name === "phone") {
-      const digitsOnly = value.replace(/\D/g, ""); // allow only numbers
-      if (digitsOnly.length > 10) return; // stop at 10
+      const digitsOnly = value.replace(/\D/g, "");
+      if (digitsOnly.length > 10) return;
       setForm({ ...form, phone: digitsOnly });
       return;
     }
@@ -50,7 +53,7 @@ const Signup = () => {
   const handleImage = (e) => setProfileImage(e.target.files[0]);
 
   // -------------------------------
-  // HANDLE SUBMIT
+  // SUBMIT
   // -------------------------------
 
   const handleSubmit = async (e) => {
@@ -74,6 +77,11 @@ const Signup = () => {
       return;
     }
 
+    if (form.password !== form.confirm_password) {
+      setMsg("Passwords do not match.");
+      return;
+    }
+
     try {
       const fd = new FormData();
       Object.keys(form).forEach((key) => fd.append(key, form[key]));
@@ -85,7 +93,11 @@ const Signup = () => {
 
       navigate("/login");
     } catch (error) {
-      setMsg(error.response?.data?.message || "Signup failed");
+      if (error.response?.status === 409) {
+        setMsg("Email already exists. User already has an account.");
+      } else {
+        setMsg(error.response?.data?.message || "Signup failed");
+      }
     }
   };
 
@@ -94,6 +106,7 @@ const Signup = () => {
       <h2 className="auth-title">Signup</h2>
 
       <form onSubmit={handleSubmit}>
+        {/* Full Name */}
         <input
           name="full_name"
           className="auth-input"
@@ -104,6 +117,7 @@ const Signup = () => {
           required
         />
 
+        {/* Email */}
         <input
           name="email"
           className="auth-input"
@@ -113,7 +127,11 @@ const Signup = () => {
           onChange={handleChange}
           required
         />
+        {!isValidGmail(form.email) && form.email.length > 0 && (
+          <p className="input-hint">* Must end with @gmail.com</p>
+        )}
 
+        {/* Phone */}
         <input
           name="phone"
           className="auth-input"
@@ -121,21 +139,64 @@ const Signup = () => {
           placeholder="10-digit Phone Number"
           value={form.phone}
           onChange={handleChange}
-          maxLength={10}
           required
         />
+        {form.phone.length > 0 && !isValidPhone(form.phone) && (
+          <p className="input-hint">* Phone must be exactly 10 digits</p>
+        )}
 
-        <input
-          name="password"
-          className="auth-input"
-          type="password"
-          placeholder=" must be 1 caps and 1 spl"
-          value={form.password}
-          onChange={handleChange}
-          required
-        />
+        {/* PASSWORD WITH TOGGLE */}
+        <div className="password-wrapper">
+          <input
+            name="password"
+            className="auth-input password-input"
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+            value={form.password}
+            onChange={handleChange}
+            required
+          />
+          <span
+            className="toggle-icon"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? "🙈" : "👁️"}
+          </span>
+        </div>
 
-        {/* ---------------- CUSTOM DROPDOWN ---------------- */}
+        {form.password.length > 0 && !isValidPassword(form.password) && (
+          <div className="input-hint">
+            <p>* At least 8 characters</p>
+            <p>* At least 1 uppercase letter</p>
+            <p>* At least 1 special symbol (!@#$%^&*)</p>
+          </div>
+        )}
+
+        {/* CONFIRM PASSWORD */}
+        <div className="password-wrapper">
+          <input
+            name="confirm_password"
+            className="auth-input password-input"
+            type={showConfirm ? "text" : "password"}
+            placeholder="Confirm Password"
+            value={form.confirm_password}
+            onChange={handleChange}
+            required
+          />
+          <span
+            className="toggle-icon"
+            onClick={() => setShowConfirm(!showConfirm)}
+          >
+            {showConfirm ? "🙈" : "👁️"}
+          </span>
+        </div>
+
+        {form.confirm_password.length > 0 &&
+          form.password !== form.confirm_password && (
+            <p className="input-hint">* Passwords do not match</p>
+          )}
+
+        {/* ROLE DROPDOWN */}
         <div className="custom-dropdown">
           <div
             className="dropdown-selected"
@@ -162,6 +223,7 @@ const Signup = () => {
           )}
         </div>
 
+        {/* Image Upload */}
         <input
           type="file"
           className="auth-input"
