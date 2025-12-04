@@ -7,213 +7,210 @@ This frontend interacts with a Node.js + Express backend and uses JWT for secure
 
 ---
 
-# 🚀 **Overview**
+🎨 CleanPro Admin Frontend
 
-The frontend provides:
+React + Vite + Axios + JWT
 
-* ✔ Admin Login
-* ✔ Protected Routing using JWT
-* ✔ Sidebar Navigation
-* ✔ Dashboard with user stats
-* ✔ Manage Users (CRUD)
-* ✔ Clean UI with responsive design
-* ✔ Axios-based API communication
+📌 Overview
 
-Only users with **admin** role can access the dashboard and management pages.
+This frontend provides:
 
----
+Signup & Login UI
 
-# 🛠 **Tech Stack**
+Password strength + visibility toggle
 
-* **React 18**
-* **React Router v6**
-* **Axios**
-* **CSS3**
-* **LocalStorage (JWT storage)**
-* **Vite** (if used)
+Role-based navigation
 
----
+Dashboard with stats
 
-# 📁 **Project Structure**
+Manage Users table
 
-```
+Manage Cleaners table
+
+Manage Partners table
+
+Logout flow
+
+🛠 Tech Stack
+
+React
+
+React Router
+
+Axios
+
+JWT stored in localStorage
+
+Custom CSS
+
+Protected Routes
+
+📂 Folder Structure
 frontend/
-│── src/
-│   ├── api/
-│   │   └── axios.js
+│
+├── src/
+│   ├── api/Axios.js
 │   ├── components/
-│   │   ├── Navbar.jsx
-│   │   └── ProtectedRoute.jsx
 │   ├── pages/
+│   │   ├── Signup.jsx
 │   │   ├── Login.jsx
 │   │   ├── Dashboard.jsx
-│   │   ├── ManageUser.jsx
-│   │   └── Sidebar.jsx
-│   ├── styles/
-│   │   ├── Login.css
-│   │   ├── Sidebar.css
-│   │   └── ManageUser.css
-│   ├── App.jsx
-│   └── main.jsx
+│   │   ├── ManageUsers.jsx
+│   │   ├── ManageCleaner.jsx
+│   │   └── ManagePartner.jsx
+│   │
+│   └── App.jsx
+│
+├── public/
+├── index.html
 └── package.json
-```
 
----
+🔐 Authentication Flow
+Login saves token:
+localStorage.setItem("token", token)
 
-# 🔐 **Authentication (JWT Based)**
+Axios automatically attaches token:
+Authorization: Bearer <token>
 
-### ✔ Login Flow
+Unauthorized users are redirected to login.
+👥 Role-Based UI
 
-1. User enters email on Login page
-2. Frontend sends request → `/api/auth/login`
-3. Backend verifies:
+Frontend checks:
 
-   * Email is registered
-   * Role = “admin”
-4. Backend returns JWT token + user info
-5. Frontend stores them:
+decodedToken.role
 
-```
-localStorage.token
-localStorage.user
-```
 
----
+Shows:
 
-# 🛡 **Protected Routes**
+Admin → All pages
 
-A custom `ProtectedRoute` component ensures:
+Cleaner → Only cleaner page
 
-* User must be logged in
-* Token must exist
-* Role must be “admin”
+Partner → Only partner page
 
-If not → redirect to `/` (Login page).
+🧮 Dashboard Data
 
-Example:
+API:
 
-```jsx
-<Route
-  path="/dashboard"
-  element={
-    <ProtectedRoute>
-      <Dashboard />
-    </ProtectedRoute>
-  }
-/>
-```
+GET /api/dashboard
 
----
 
-# 🔗 **API Integration (Axios)**
+Frontend displays:
 
-A global axios instance handles authentication:
+Total users
 
-```js
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-```
+Admin count
 
-✔ Automatically attaches JWT
-✔ No need to manually add headers
+Partner count
 
----
+Cleaner count
 
-# 🧮 **Dashboard**
+👤 User Tables
 
-Displays stats fetched from backend:
+All run from:
 
-* Total admins
-* Users
-* Partners
-* Cleaners
+GET /api/users
 
-Using:
 
-```
-GET /api/users/stats/all
-```
+Then filtered by role.
 
----
+🛡 Protected Routes
 
-# 👥 **Manage Users (CRUD)**
+Frontend checks:
 
-The Manage Users page includes:
+if (!token) navigate("/login")
 
-* Add User
-* Edit User
-* Delete User
-* View all Users
-
-APIs used:
-
-```
-GET    /api/users
-POST   /api/users
-PUT    /api/users
-DELETE /api/users
-```
-
-Dynamic table → Modal-based forms → Validation included.
-
----
-
-# 🎨 **UI/UX Highlights**
-
-* Clean, modern Login screen
-* Responsive Sidebar navigation
-* Card-based dashboard layout
-* Modal-based Create/Edit user forms
-* Consistent design across pages
-
----
-
-# 🧪 **How to Run Frontend**
-
-```
-cd frontend
+▶ Running Locally
 npm install
 npm run dev
-```
-
-The application runs at:
-
-```
-http://localhost:5173  (default Vite port)
-```
-
----
-
-# 📌 **Environment Variables**
-
-Create `frontend/.env`:
-
-```
-VITE_API_URL=http://localhost:5000
-```
-
-This ensures axios uses correct backend URL.
-
----
-
-# 🏁 **Completed Features**
-
-* ✔ Admin-only authentication
-* ✔ JWT token handling
-* ✔ Dashboard with live stats
-* ✔ Manage Users (CRUD)
-* ✔ Responsive UI
-* ✔ Protected routes
-* ✔ Axios interceptor
-* ✔ Sidebar + Page layout
-
----
 
 
 
-"# CleanPro-Admin-Frontend" 
+
+
+                           ┌──────────────────────────┐
+                           │        FRONTEND          │
+                           │  React + Axios + JWT     │
+                           └────────────┬─────────────┘
+                                        │
+                                        │ (User submits signup/login)
+                                        ▼
+                     ┌────────────────────────────────────────┐
+                     │        /api/auth/signup (POST)          │
+                     │        /api/auth/login  (POST)          │
+                     └───────────────────────┬────────────────┘
+                                             │
+                                             ▼
+                               ┌──────────────────────────┐
+                               │     AUTH ROUTES          │
+                               │  authRoutes.js           │
+                               └────────────┬─────────────┘
+                                             │
+                                             ▼
+                               ┌──────────────────────────┐
+                               │   AUTH CONTROLLER        │
+                               │   signupUser / loginUser │
+                               └────────────┬─────────────┘
+                                             │
+                                             │
+         ┌───────────────────────────────────┼───────────────────────────────────┐
+         │                                   │                                   │
+         ▼                                   ▼                                   ▼
+┌────────────────┐                  ┌─────────────────────┐               ┌────────────────┐
+│ FRONTEND VALID │                  │ BACKEND VALIDATION  │               │ PASSWORD HASH   │
+│ Email / Phone  │                  │ Email exists?       │               │ bcrypt.hash     │
+│ Password rules │                  │ Required fields?    │               └────────────────┘
+└────────────────┘                  │ Normalize email     │
+                                    └─────────────────────┘
+                                             │
+                                             ▼
+                             ┌────────────────────────────────┐
+                             │   DATABASE INSERT / SELECT     │
+                             │     users table ONLY           │
+                             └────────────────────────────────┘
+                                             │
+                                             ▼
+                                 ┌────────────────────────┐
+                                 │ AUTH SUCCESS RESPONSE  │
+                                 │ Signup or Login OK     │
+                                 └─────────┬──────────────┘
+                                           │
+                                           ▼
+                           ┌────────────────────────────────┐
+                           │   JWT TOKEN GENERATED          │
+                           │   Stored in localStorage       │
+                           └─────────────┬──────────────────┘
+                                         │
+                                         ▼
+                           ┌───────────────────────────────────┐
+                           │  PROTECTED ROUTES VIA JWT         │
+                           │  /api/dashboard                   │
+                           │  /api/users                       │
+                           └─────────────┬─────────────────────┘
+                                         │
+                                         ▼
+                           ┌───────────────────────────────────┐
+                           │    AUTH MIDDLEWARE (Backend)      │
+                           │  • Verifies JWT                   │
+                           │  • Sets req.user                  │
+                           └─────────────┬─────────────────────┘
+                                         │
+                                         ▼
+                          ┌────────────────────────────────────┐
+                          │    ROLE MIDDLEWARE (allowRoles)    │
+                          │  Example: allowRoles("admin")      │
+                          │  Deny if role mismatch             │
+                          └─────────────┬─────────────────────┘
+                                         │
+                                         ▼
+                      ┌────────────────────────────────────────────┐
+                      │          USER CONTROLLER (Admin)           │
+                      │      /api/users → list/update/delete       │
+                      │      /api/dashboard → stats                │
+                      └────────────────────────────────────────────┘
+                                         │
+                                         ▼
+                           ┌───────────────────────────────────┐
+                           │            FRONTEND UI            │
+                           │ Dashboard, Manage Users, etc.     │
+                           └───────────────────────────────────┘
